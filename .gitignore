@@ -1,0 +1,11 @@
+lib/python3.6/site-packages/idna-2.7.dist-info
+lib/python3.6/site-packages/idna/__pycache__
+lib/python3.6/site-packages/pip-10.0.1-py3.6.egg/EGG-INFO
+lib/python3.6/site-packages/pip-10.0.1-py3.6.egg/pip
+lib
+bin
+*.log
+*.json
+*.cfg
+my_module/__pycache__
+config.py
