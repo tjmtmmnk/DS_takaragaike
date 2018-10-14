@@ -1,15 +1,15 @@
-from my_module import TakaragaikeConfig
-from my_module import ControlBrowser
-from my_module import Scraping
+from my_module import DataBase
+from my_module import DataBaseConfig
 
 if __name__ == '__main__':
-    cfg = TakaragaikeConfig()
-    cb = ControlBrowser(cfg)
+    db_cfg = DataBaseConfig()
+    db = DataBase(db_cfg)
+    one = {
+        "date": "9/12",
+        "time": "5:10",
+        "status": 1
+    }
 
-    cb.setURL(cfg.LOGIN_URL)
-    cb.login()
-    cb.setCarType(cfg.AT)
+    db.insertValues(one)
+    db.debugTable()
 
-    sc = Scraping(cb.getSource(), "html.parser", cfg)
-    sc.makeReservationList()
-    sc.debugReservationList()

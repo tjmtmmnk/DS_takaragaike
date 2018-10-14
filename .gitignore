@@ -10,3 +10,4 @@ bin
 my_module/__pycache__
 config.py
 takaragaike_config.py
+data_base_config.py
