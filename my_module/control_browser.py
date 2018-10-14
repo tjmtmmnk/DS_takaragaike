@@ -15,13 +15,20 @@ class ControlBrowser():
         self.cfg = cfg
 
     def __del__(self):
+        print("close browser")
         self.close()
 
     def setURL(self, url):
         self.browser.get(url)
 
     def setCarType(self, type='02'):  # ATをデフォルト引数に
-        self.car_type = type
+        car_type_list = self.browser.find_element_by_name('CARTYPE')
+        car_type_select = Select(car_type_list)
+        car_type_select.select_by_value(type)
+        ok_button = self.browser.find_element_by_xpath(
+            "/html/body/p/table[2]/tbody/tr[1]/td[2]/form/table/tbody/tr[2]/td[2]/input")
+        ok_button.click()
+        self.source = self.browser.page_source
 
     def login(self):
         user_name_field = self.browser.find_element_by_xpath("/html/body/form/table/tbody/tr[1]/td/input")
@@ -32,15 +39,6 @@ class ControlBrowser():
 
         submit_button = self.browser.find_element_by_xpath("/html/body/form/table/tbody/tr[3]/td/input")
         submit_button.click()
-
-    def selectCar(self):
-        car_type_list = self.browser.find_element_by_name('CARTYPE')
-        car_type_select = Select(car_type_list)
-        car_type_select.select_by_value(self.car_type)
-        ok_button = self.browser.find_element_by_xpath(
-            "/html/body/p/table[2]/tbody/tr[1]/td[2]/form/table/tbody/tr[2]/td[2]/input")
-        ok_button.click()
-        self.source = self.browser.page_source
 
     def getSource(self):
         return self.source

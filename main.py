@@ -9,10 +9,7 @@ if __name__ == '__main__':
     cb.setURL(cfg.LOGIN_URL)
     cb.login()
     cb.setCarType(cfg.AT)
-    cb.selectCar()
 
     sc = Scraping(cb.getSource(), "html.parser", cfg)
     sc.makeReservationList()
     sc.debugReservationList()
-
-    cb.close()
