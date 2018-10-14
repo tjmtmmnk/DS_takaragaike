@@ -29,18 +29,18 @@ class Scraping():
                 # format前に"に注目するとstatusを表すワードが""で囲われていて1,2番目に出現することを利用
                 self.status.append(status_not_format[e1 + 1:e2])
 
-    #   @param (status) :　空いているときに1, それ以外は0
+    #   @param (status) :　空いているときに1, それ以外は-1
     def makeReservationList(self):
         self.getDatesbyClass()
         self.getStatus()
 
         for d in range(len(self.dates)):  # 予約リストの作成
             for t in range(len(self.cfg.TIME)):
-                status = 0
+                status = -1
                 if (self.status[10 * d + t] == self.cfg.FREE):
                     status = 1
                 else:
-                    status = 0
+                    status = -1
                 self.reservation.append(
                     {"date": self.dates[d], "time": self.cfg.TIME[t], "status": status}
                 )

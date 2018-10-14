@@ -19,7 +19,17 @@ if __name__ == '__main__':
 
     resv_list = sc.getReservationList()
 
+    # db.clearTable()
+
+    # sc.debugReservationList()
+
     for res in resv_list:
         db.insertValues(res)
 
-    db.debugTable()
+    free_list = db.getFreeList()
+
+    if (db.hasFree() != True):
+        print("No Change")
+
+    for fl in free_list:
+        print(fl)
