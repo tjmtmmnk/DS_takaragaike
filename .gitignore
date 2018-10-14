@@ -9,3 +9,4 @@ bin
 *.cfg
 my_module/__pycache__
 config.py
+takaragaike_config.py
