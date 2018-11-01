@@ -26,7 +26,7 @@ if __name__ == '__main__':
     filled_list = db.getFilledList()
 
     for fl in free_list:
-        print("[free list] \t" + str(fl))
+        print("[空きが出ました] \t" + str(fl["date"]) + " " + str(fl["time"]))
 
     for fil in filled_list:
-        print("[filled list] \t" + str(fil))
+        print("[埋まりました] \t" + str(fil["date"]) + " " + str(fil["time"]))
