@@ -44,5 +44,5 @@ class ControlBrowser():
         return self.source
 
     def close(self):
-        sleep(3)
+        sleep(1)
         self.browser.close()

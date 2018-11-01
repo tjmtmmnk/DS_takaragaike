@@ -1,7 +1,9 @@
 from bs4 import BeautifulSoup
 
-
 class Scraping():
+    FREE = 1
+    FILLED = 0
+
     def __init__(self, source, parser, cfg):
         self.soup = BeautifulSoup(source, parser)
         self.dates = []
@@ -36,11 +38,11 @@ class Scraping():
 
         for d in range(len(self.dates)):  # 予約リストの作成
             for t in range(len(self.cfg.TIME)):
-                status = -1
+                status = 0
                 if (self.status[10 * d + t] == self.cfg.FREE):
-                    status = 1
+                    status = self.FREE
                 else:
-                    status = -1
+                    status = self.FILLED
                 self.reservation.append(
                     {"date": self.dates[d], "time": self.cfg.TIME[t], "status": status}
                 )
