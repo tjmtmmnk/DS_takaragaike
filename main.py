@@ -30,8 +30,7 @@ if __name__ == '__main__':
 
         resv_list = sc.getReservationList()
 
-        for rl in resv_list:
-            db.update(rl)
+        db.update(resv_list)
 
         free_list = db.getFreeList()
         filled_list = db.getFilledList()
@@ -53,7 +52,8 @@ if __name__ == '__main__':
             file.write("[埋まりました]\n|")
 
             for fil in filled_list:
-                file.write(str(fil["month"]) + "/" + str(fil["day"]) + "(" + fil["date"] + ") " + str(fil["time"]) + "| ")
+                file.write(
+                    str(fil["month"]) + "/" + str(fil["day"]) + "(" + fil["date"] + ") " + str(fil["time"]) + "| ")
 
             file.write("\n")
 

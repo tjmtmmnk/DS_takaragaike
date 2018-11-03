@@ -1,6 +1,5 @@
 import psycopg2 as ps
 
-
 class DataBase():
     FREE = 1
     FILLED = 0
@@ -28,43 +27,50 @@ class DataBase():
             "'," + str(values["status"]) + ");"
         )
 
-    def update(self, values):
-        status = self.getStatus(values)
-        if status is None:
-            self.__insertValues(values)
-            if values["status"] == self.FREE:
-                self.free_list.append(values)
-        else:
-            if status == self.FILLED and values["status"] == self.FREE:  # 埋まっていたところがFREEになったとき
-                self.free_list.append(values)
-            elif status == self.FREE and values["status"] == self.FREE:  # FREEのところがFREEだったとき
-                self.free_list.append(values)
-            elif status == self.FREE and values["status"] == self.FILLED:  # FREEだったところが埋まったとき
-                self.filled_list.append(values)
-            self.updateStatus(values)
+    def update(self, resv_list):
+        db_free_list = []
+
+        for rl in resv_list:  # スクレイピング結果からFREEリストを作る
+            if rl["status"] == self.FREE:
+                value = \
+                    {
+                        "month": rl["month"],
+                        "day": rl["day"],
+                        "time": rl["time"]
+                    }
+                self.free_list.append(value)
+
+        self.execSql("select * from reservation where status = 1;")  # 更新前のDBのFREEリストを作る
+        for f in self.cursor.fetchall():
+            value = \
+                {
+                    "month": f[0],
+                    "day": f[1],
+                    "time": f[2]
+                }
+            db_free_list.append(value)
+
+        for rfl in self.free_list:  # 更新前のDBのFREE要素がスクレイピング結果の中になければ埋まった
+            for dfl in db_free_list:
+                if not (rfl["month"] == dfl["month"] and rfl["day"] == dfl["day"] and rfl["time"] == dfl["time"]):
+                    self.filled_list.append(dfl)
+                    self.updateStatus(dfl, self.FILLED)
+
+            self.updateStatus(rfl, self.FREE)
 
     # @return : DB内に存在するときはDB内のstatus
     # @return : DB内に存在しないときはNone
     def getStatus(self, values):
         self.execSql(
-            "select exists(select status from " + self.db_cfg.TABLE_NAME + \
+            "select status from " + self.db_cfg.TABLE_NAME + \
             " where month=" + str(values["month"]) + " and day=" + str(values["day"]) + \
-            " and " + "time=" + "'" + values["time"] + "'" + ");"
+            " and " + "time=" + "'" + values["time"] + "'" + ";"
         )
-        is_exist = self.cursor.fetchone()[0]
-        if is_exist:
-            self.execSql(
-                "select status from " + self.db_cfg.TABLE_NAME + \
-                " where month=" + str(values["month"]) + " and day=" + str(values["day"]) + \
-                " and " + "time=" + "'" + values["time"] + "'" + ";"
-            )
-            return self.cursor.fetchone()[0]
-        else:
-            return None
+        return self.cursor.fetchone()[0]
 
-    def updateStatus(self, values):
+    def updateStatus(self, values, status):
         self.execSql(
-            "update " + self.db_cfg.TABLE_NAME + " set status=" + str(values["status"]) + \
+            "update " + self.db_cfg.TABLE_NAME + " set status=" + str(status) + \
             " where month=" + str(values["month"]) + " and day=" + str(values["day"]) +
             " and " + "time=" + "'" + values["time"] + "'" + ";"
         )
