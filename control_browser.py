@@ -4,19 +4,22 @@ from time import sleep
 
 
 class ControlBrowser():
-    def __init__(self, cfg, is_use_headless=True):
-        if (is_use_headless):
-            options = webdriver.chrome.options.Options()
-            options.add_argument("--headless")
+    def __init__(self, cfg, is_use_headless=True, is_use_heroku=False):
+        options = webdriver.chrome.options.Options()
+
+        if (is_use_heroku):
+            options.binary_location = '/app/.apt/usr/bin/google-chrome'
+            options.add_argument('--headless')
+            options.add_argument('--disable-gpu')
             self.browser = webdriver.Chrome(chrome_options=options)
         else:
-            self.browser = webdriver.Chrome()
+            if (is_use_headless):
+                options.add_argument("--headless")
+                self.browser = webdriver.Chrome(chrome_options=options)
+            else:
+                self.browser = webdriver.Chrome()
 
         self.cfg = cfg
-
-    def __del__(self):
-        print("close browser")
-        self.close()
 
     def setURL(self, url):
         self.browser.get(url)
@@ -45,4 +48,5 @@ class ControlBrowser():
 
     def close(self):
         sleep(1)
+        print("close browser")
         self.browser.close()

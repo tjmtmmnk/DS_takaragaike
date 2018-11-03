@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 
+
 class Scraping():
     FREE = 1
     FILLED = 0
@@ -8,14 +9,27 @@ class Scraping():
         self.soup = BeautifulSoup(source, parser)
         self.dates = []
         self.status = []
-        self.times = []
         self.reservation = []
         self.cfg = cfg
 
-    def getDatesbyClass(self):
+    def getDates(self):
         head = self.soup.find_all(class_="Head")
         for h in head:  # 日付取得
-            self.dates.append(h.text)
+            month, day, date = self.separateDateTuple(str(h.text))
+            self.dates.append(
+                {
+                    "month": month,
+                    "day": day,
+                    "date": date
+                }
+            )
+
+    # @input : 11/05(月)のような形式
+    def separateDateTuple(self, raw_date: str):
+        slash = raw_date.find('/')
+        left = raw_date.find('(')
+        right = raw_date.find(')')
+        return int(raw_date[0:slash]), int(raw_date[slash + 1:left]), raw_date[left + 1:right]
 
     def getStatus(self):
         for i in range(self.cfg.TABLE_ID_MAX):  # status取得
@@ -31,9 +45,9 @@ class Scraping():
                 # format前に"に注目するとstatusを表すワードが""で囲われていて1,2番目に出現することを利用
                 self.status.append(status_not_format[e1 + 1:e2])
 
-    #   @param (status) :　空いているときに1, それ以外は-1
+    #   @param (status) :　空いているときに1, それ以外は0
     def makeReservationList(self):
-        self.getDatesbyClass()
+        self.getDates()
         self.getStatus()
 
         for d in range(len(self.dates)):  # 予約リストの作成
@@ -44,7 +58,13 @@ class Scraping():
                 else:
                     status = self.FILLED
                 self.reservation.append(
-                    {"date": self.dates[d], "time": self.cfg.TIME[t], "status": status}
+                    {
+                        "month": self.dates[d]["month"],
+                        "day": self.dates[d]["day"],
+                        "date": self.dates[d]["date"],
+                        "time": self.cfg.TIME[t],
+                        "status": status
+                    }
                 )
 
     def getReservationList(self):

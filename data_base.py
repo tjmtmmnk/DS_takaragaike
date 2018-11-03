@@ -24,45 +24,48 @@ class DataBase():
     def __insertValues(self, values):
         self.execSql(
             "insert into " + self.db_cfg.TABLE_NAME +
-            " values('" + values["date"] + "', '" + values["time"] + "', " + str(values["status"]) + ");"
+            " values(" + str(values["month"]) + "," + str(values["day"]) + ",'" + values["time"] +
+            "'," + str(values["status"]) + ");"
         )
 
     def update(self, values):
         status = self.getStatus(values)
         if status is None:
             self.__insertValues(values)
-            if (values["status"] == self.FREE):
+            if values["status"] == self.FREE:
                 self.free_list.append(values)
         else:
-            if (status == self.FILLED and values["status"] == self.FREE):  # 埋まっていたところがFREEになったとき
+            if status == self.FILLED and values["status"] == self.FREE:  # 埋まっていたところがFREEになったとき
                 self.free_list.append(values)
-            elif (status == self.FREE and values["status"] == self.FILLED):  # FREEだったところが埋まったとき
+            elif status == self.FREE and values["status"] == self.FREE:  # FREEのところがFREEだったとき
+                self.free_list.append(values)
+            elif status == self.FREE and values["status"] == self.FILLED:  # FREEだったところが埋まったとき
                 self.filled_list.append(values)
-            self.updateTable(values)
+            self.updateStatus(values)
 
     # @return : DB内に存在するときはDB内のstatus
     # @return : DB内に存在しないときはNone
     def getStatus(self, values):
         self.execSql(
             "select exists(select status from " + self.db_cfg.TABLE_NAME + \
-            " where date=" + "'" + values["date"] + "'" + \
+            " where month=" + str(values["month"]) + " and day=" + str(values["day"]) + \
             " and " + "time=" + "'" + values["time"] + "'" + ");"
         )
         is_exist = self.cursor.fetchone()[0]
         if is_exist:
             self.execSql(
                 "select status from " + self.db_cfg.TABLE_NAME + \
-                " where date=" + "'" + values["date"] + "'" + \
+                " where month=" + str(values["month"]) + " and day=" + str(values["day"]) + \
                 " and " + "time=" + "'" + values["time"] + "'" + ";"
             )
             return self.cursor.fetchone()[0]
         else:
             return None
 
-    def updateTable(self, values):
+    def updateStatus(self, values):
         self.execSql(
             "update " + self.db_cfg.TABLE_NAME + " set status=" + str(values["status"]) + \
-            " where date=" + "'" + values["date"] + "'" + \
+            " where month=" + str(values["month"]) + " and day=" + str(values["day"]) +
             " and " + "time=" + "'" + values["time"] + "'" + ";"
         )
 
