@@ -1,5 +1,6 @@
 import psycopg2 as ps
 
+
 class DataBase():
     FREE = 1
     FILLED = 0
@@ -50,12 +51,18 @@ class DataBase():
                 }
             db_free_list.append(value)
 
-        for rfl in self.free_list:  # 更新前のDBのFREE要素がスクレイピング結果の中になければ埋まった
-            for dfl in db_free_list:
-                if not (rfl["month"] == dfl["month"] and rfl["day"] == dfl["day"] and rfl["time"] == dfl["time"]):
-                    self.filled_list.append(dfl)
-                    self.updateStatus(dfl, self.FILLED)
+        for dfl in db_free_list:  # 更新前のDBのFREE要素がスクレイピング結果の中になければ埋まった
+            if len(self.free_list) > 0:
+                for rfl in self.free_list:
+                    if not (rfl["month"] == dfl["month"] and rfl["day"] == dfl["day"] and rfl["time"] == dfl["time"]):
+                        print("aaa")
+                        self.filled_list.append(dfl)
+                        self.updateStatus(dfl, self.FILLED)
+            else:
+                self.filled_list.append(dfl)
+                self.updateStatus(dfl, self.FILLED)
 
+        for rfl in self.free_list:
             self.updateStatus(rfl, self.FREE)
 
     # @return : DB内に存在するときはDB内のstatus

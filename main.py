@@ -43,17 +43,30 @@ if __name__ == '__main__':
         if exist_free_list:
             file.write("[空いてます]\n|")
 
+            fl_date = ""
             for fl in free_list:
-                file.write(str(fl["month"]) + "/" + str(fl["day"]) + "(" + fl["date"] + ") " + str(fl["time"]) + "| ")
+                for rl in resv_list:
+                    if rl["month"] == fl["month"] and rl["day"] == fl["day"]:
+                        fl_date = rl["date"]
+                        break
+
+                file.write(str(fl["month"]) + "/" + str(fl["day"]) + "(" + fl_date + ") " + str(fl["time"]) + "| ")
 
             file.write("\n")
 
         if exist_filled_list:
             file.write("[埋まりました]\n|")
 
+            fil_date = ""
+            for fil in filled_list:
+                for rl in resv_list:
+                    if rl["month"] == fil["month"] and rl["day"] == fil["day"]:
+                        fil_date = rl["date"]
+                        break
+
             for fil in filled_list:
                 file.write(
-                    str(fil["month"]) + "/" + str(fil["day"]) + "(" + fil["date"] + ") " + str(fil["time"]) + "| ")
+                    str(fil["month"]) + "/" + str(fil["day"]) + "(" + fil_date + ") " + str(fil["time"]) + "| ")
 
             file.write("\n")
 
