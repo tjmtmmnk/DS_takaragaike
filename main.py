@@ -9,7 +9,7 @@ from datetime import datetime
 
 if __name__ == '__main__':
     now_time = datetime.now()
-    is_run = ((9 <= now_time.hour and now_time.hour <= 24) or now_time.hour == 1)  # 9時~25時の間運用
+    is_run = (9 <= now_time.hour and now_time.hour <= 24)  # 9時~24時の間運用
 
     if is_run:
         cfg = TakaragaikeConfig()
@@ -46,7 +46,7 @@ if __name__ == '__main__':
             fl_date = ""
             for fl in free_list:
                 for rl in resv_list:
-                    if rl["month"] == fl["month"] and rl["day"] == fl["day"]:
+                    if rl["month"] == fl["month"] and rl["day"] == fl["day"] and rl["time"] == fl["time"]:
                         fl_date = rl["date"]
                         break
 
@@ -60,13 +60,11 @@ if __name__ == '__main__':
             fil_date = ""
             for fil in filled_list:
                 for rl in resv_list:
-                    if rl["month"] == fil["month"] and rl["day"] == fil["day"]:
+                    if rl["month"] == fil["month"] and rl["day"] == fil["day"] and rl["time"] == fil["time"]:
                         fil_date = rl["date"]
                         break
 
-            for fil in filled_list:
-                file.write(
-                    str(fil["month"]) + "/" + str(fil["day"]) + "(" + fil_date + ") " + str(fil["time"]) + "| ")
+                file.write(str(fil["month"]) + "/" + str(fil["day"]) + "(" + fil_date + ") " + str(fil["time"]) + "| ")
 
             file.write("\n")
 

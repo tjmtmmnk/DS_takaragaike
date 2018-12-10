@@ -53,11 +53,9 @@ class DataBase():
 
         for dfl in db_free_list:  # 更新前のDBのFREE要素がスクレイピング結果の中になければ埋まった
             if len(self.free_list) > 0:
-                for rfl in self.free_list:
-                    if not (rfl["month"] == dfl["month"] and rfl["day"] == dfl["day"] and rfl["time"] == dfl["time"]):
-                        print("aaa")
-                        self.filled_list.append(dfl)
-                        self.updateStatus(dfl, self.FILLED)
+                if dfl not in self.free_list:
+                    self.filled_list.append(dfl)
+                    self.updateStatus(dfl, self.FILLED)
             else:
                 self.filled_list.append(dfl)
                 self.updateStatus(dfl, self.FILLED)
